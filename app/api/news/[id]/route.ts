@@ -16,14 +16,15 @@ const updateNewsSchema = z.object({
 // GET - 获取单个新闻
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     // 暂时使用测试数据
     const testDataResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/test-data?type=news`);
     const news = await testDataResponse.json();
 
-    const newsItem = news.find((item: any) => item.id === params.id);
+    const newsItem = news.find((item: any) => item.id === resolvedParams.id);
 
     if (!newsItem) {
       return NextResponse.json(
@@ -45,20 +46,21 @@ export async function GET(
 // PATCH - 更新新闻
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const body = await request.json();
 
     // 验证数据
     const validatedData = updateNewsSchema.parse(body);
 
     // 模拟更新操作
-    console.log(`Updating news ${params.id} with:`, validatedData);
+    console.log(`Updating news ${resolvedParams.id} with:`, validatedData);
 
     // 返回模拟的更新结果
     return NextResponse.json({
-      id: params.id,
+      id: resolvedParams.id,
       ...validatedData,
       updated_at: new Date().toISOString(),
     });
@@ -82,11 +84,12 @@ export async function PATCH(
 // DELETE - 删除新闻
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     // 模拟删除操作
-    console.log(`Deleting news ${params.id}`);
+    console.log(`Deleting news ${resolvedParams.id}`);
 
     return NextResponse.json({ message: '删除成功' });
   } catch (error) {
