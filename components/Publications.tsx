@@ -138,7 +138,7 @@ export default function Publications() {
                     
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => setSelectedPublication(pub)}
+                        onClick={() => setSelectedPublication(paper)}
                         className="flex items-center space-x-2 px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-ocean-blue-dark transition-colors duration-200"
                       >
                         <ExternalLink className="w-4 h-4" />

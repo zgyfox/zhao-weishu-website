@@ -175,7 +175,7 @@ function DashboardOverview() {
 
 // Publications Manager Component
 function PublicationsManager() {
-  const [publications, setPublications] = useState([]);
+  const [publications, setPublications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -301,7 +301,7 @@ function PublicationsManager() {
 }
 
 function NewsManager() {
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 

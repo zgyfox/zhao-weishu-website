@@ -19,7 +19,7 @@ import {
   Heart,
   Star
 } from 'lucide-react';
-import { publicationsData } from '@/lib/publications';
+import { publications } from '@/lib/publications';
 import Button from './ui/Button';
 import Card, { CardHeader, CardContent, CardTitle, CardDescription } from './ui/Card';
 import Modal from './ui/Modal';
@@ -35,7 +35,7 @@ export default function PremiumPublications() {
     setIsLoaded(true);
   }, []);
 
-  const filteredPublications = publicationsData.filter(pub => {
+  const filteredPublications = publications.filter(pub => {
     const matchesFilter = filter === 'all' || pub.type === filter;
     const matchesSearch = pub.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          pub.journal.toLowerCase().includes(searchTerm.toLowerCase());
@@ -43,9 +43,9 @@ export default function PremiumPublications() {
   });
 
   const stats = [
-    { icon: BookOpen, label: '总发表论文', value: publicationsData.length, color: 'text-blue-600' },
-    { icon: Award, label: '顶级期刊', value: publicationsData.filter(p => p.type === 'flagship').length, color: 'text-emerald-600' },
-    { icon: TrendingUp, label: '总引用数', value: publicationsData.reduce((sum, p) => sum + (p.citations || 0), 0), color: 'text-purple-600' },
+    { icon: BookOpen, label: '总发表论文', value: publications.length, color: 'text-blue-600' },
+    { icon: Award, label: '顶级期刊', value: publications.filter(p => p.type === 'flagship').length, color: 'text-emerald-600' },
+    { icon: TrendingUp, label: '总引用数', value: publications.reduce((sum, p) => sum + (p.citations || 0), 0), color: 'text-purple-600' },
     { icon: Star, label: '平均影响因子', value: '15.2', color: 'text-orange-600' }
   ];
 
@@ -156,7 +156,7 @@ export default function PremiumPublications() {
           <AnimatePresence>
             {filteredPublications.map((pub, index) => (
               <motion.div
-                key={pub.id}
+                key={`${pub.year}-${index}`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -30 }}
@@ -199,19 +199,21 @@ export default function PremiumPublications() {
                           icon={<Share2 className="w-4 h-4" />}
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigator.share?.({ title: pub.title, url: window.location.href });
+                            if (typeof window !== 'undefined') {
+                              navigator.share?.({ title: pub.title, url: window.location.href });
+                            }
                           }}
                         />
                       </div>
                     </div>
                     
                     <CardTitle className="text-lg group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {pub.title}
+                      {pub.titleChinese}
                     </CardTitle>
-                    
-                    {pub.titleEn && (
+
+                    {pub.title && (
                       <p className="text-sm text-gray-500 italic line-clamp-2">
-                        {pub.titleEn}
+                        {pub.title}
                       </p>
                     )}
                   </CardHeader>
@@ -363,7 +365,11 @@ export default function PremiumPublications() {
             <Button
               variant="primary"
               icon={<ExternalLink className="w-4 h-4" />}
-              onClick={() => window.open(`https://doi.org/${selectedPublication.doi}`, '_blank')}
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.open(`https://doi.org/${selectedPublication.doi}`, '_blank');
+                }
+              }}
             >
               查看原文
             </Button>
